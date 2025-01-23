@@ -150,7 +150,7 @@ import java.sql.{Connection, DriverManager, ResultSet}
 
       // Crear y ejecutar consulta
       val statement = connection.createStatement()
-      val resultSet = statement.executeQuery("SELECT * FROM empleados") // Reemplaza con tu tabla
+      val resultSet = statement.executeQuery("SELECT * FROM empleados")
 
       // Procesar resultados
       println("ID | Nombre        | Puesto          | Salario")
