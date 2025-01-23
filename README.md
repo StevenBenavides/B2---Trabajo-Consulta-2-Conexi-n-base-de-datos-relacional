@@ -102,10 +102,77 @@ Uso típico: Ideal para desarrolladores que trabajan en un entorno funcional pur
 * Documentar cómo establecer una conexión a una base de datos relacional (mysql). Siga los siguientes pasos:
   
 Genere una base de datos en mysql
+``` mysqul
+CREATE DATABASE scala_demo;
+USE scala_demo;
 
+CREATE TABLE empleados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    puesto VARCHAR(100),
+    salario DECIMAL(10, 2)
+);
+
+```
 Genere una tabla con datos de prueba
+``` mysql
+INSERT INTO empleados (nombre, puesto, salario)
+VALUES 
+    ('Juan Pérez', 'Desarrollador', 50000.00),
+    ('María López', 'Analista', 60000.00),
+    ('Carlos Sánchez', 'Gerente', 80000.00);
 
+```
 Desde Scala establezca la conexión a la base datos
 
 (opcional) Desde Scala realice la consulta de todos los datos de la tabla de prueba. 
 
+``` Scala
+package Bimestre_2.Semana_6
+import java.sql.{Connection, DriverManager, ResultSet}
+
+  object coneccion_sql  extends App {
+    // Parámetros de conexión
+    val url = "jdbc:mysql://localhost:3306/scala_demo" //
+    val username = "root" //
+    val password = "deathghost" //
+
+    // Conexión a la base de datos
+    var connection: Connection = null
+
+    try {
+      // Cargar el controlador JDBC
+      Class.forName("com.mysql.cj.jdbc.Driver")
+
+      // Establecer conexión
+      connection = DriverManager.getConnection(url, username, password)
+      println("Conexión establecida con éxito.")
+
+      // Crear y ejecutar consulta
+      val statement = connection.createStatement()
+      val resultSet = statement.executeQuery("SELECT * FROM empleados") // Reemplaza con tu tabla
+
+      // Procesar resultados
+      println("ID | Nombre        | Puesto          | Salario")
+      println("-----------------------------------------------")
+      while (resultSet.next()) {
+        val id = resultSet.getInt("id")
+        val nombre = resultSet.getString("nombre")
+        val puesto = resultSet.getString("puesto")
+        val salario = resultSet.getBigDecimal("salario")
+        println(f"$id%-3d| $nombre%-13s| $puesto%-15s| $$salario%-10.2f")
+      }
+    } catch {
+      case e: Exception =>
+        e.printStackTrace()
+    } finally {
+      // Cerrar conexión
+      if (connection != null) {
+        connection.close()
+        println("Conexión cerrada.")
+      }
+    }
+  }
+
+
+```
